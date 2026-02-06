@@ -16,6 +16,11 @@ const port = process.env.PORT || 10000;
 app.use("/api/auth", authRoutes);
 app.use("/api/msg", msgRoutes);
 
+app.get("/", (req, res) => {
+  res.send("ChatConnect backend is live 🚀");
+});
+
+
 // if (process.env.NODE_ENV === "production") {
 //   const frontendPath = path.join(__dirname, "../../frontend/dist");
 //   app.use(express.static(frontendPath));
