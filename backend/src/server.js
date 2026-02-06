@@ -16,14 +16,14 @@ const port = process.env.PORT || 10000;
 app.use("/api/auth", authRoutes);
 app.use("/api/msg", msgRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "../../frontend/dist");
-  app.use(express.static(frontendPath));
+// if (process.env.NODE_ENV === "production") {
+//   const frontendPath = path.join(__dirname, "../../frontend/dist");
+//   app.use(express.static(frontendPath));
 
-  app.get("*", (_, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-  });
-}
+//   app.get("*", (_, res) => {
+//     res.sendFile(path.join(frontendPath, "index.html"));
+//   });
+// }
 
 app.listen(port, () => {
   console.log(`server is running at port: ${port}`);
