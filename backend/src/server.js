@@ -4,8 +4,16 @@ import cors from "cors";
 import authRoutes from "./routes/auth.route.js";
 import msgRoutes from "./routes/msg.route.js";
 
+import { connectDb } from "./lib/db.js";
+
+
 dotenv.config();
 const app = express();
+
+app.use(express.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 app.use(cors({
   origin: [
@@ -25,4 +33,5 @@ app.get("/", (req, res) => {
 const port = process.env.PORT || 10000;
 app.listen(port, () => {
   console.log(`server is running at port: ${port}`);
+  connectDb()
 });
