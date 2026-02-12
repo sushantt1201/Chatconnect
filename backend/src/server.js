@@ -4,15 +4,17 @@ import cors from "cors";
 import authRoutes from "./routes/auth.route.js";
 import msgRoutes from "./routes/msg.route.js";
 
+import cookieParser from "cookie-parser";
 import { connectDb } from "./lib/db.js";
 
 
 dotenv.config();
 const app = express();
 
-app.use(express.json());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 
 app.use(cors({

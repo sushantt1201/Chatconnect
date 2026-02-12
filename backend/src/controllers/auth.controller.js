@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { generateToken } from "../lib/utils.js";
 import { sendWelcomeEmail } from "../emails/emailHandler.js";
 import "dotenv/config";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req, res) => {
     const { fullName, Email, Password } = req.body;
@@ -40,7 +41,7 @@ export const signup = async (req, res) => {
             _id: savedUser._id,
             fullName: savedUser.fullName,
             Email: savedUser.Email,
-            profilePic: savedUser.ProfilePic,
+            ProfilePic: savedUser.ProfilePic,
         });
 
         try {
@@ -75,7 +76,7 @@ export const login = async (req, res) => {
             _id: user._id,
             fullName: user.fullName,
             Email: user.Email,
-            profilePic: user.profilePic,
+            ProfilePic: user.ProfilePic,
         });
 
     } catch (error) {
@@ -88,3 +89,32 @@ export const logout = (_, res) => {
     res.cookie("jwt", "", { maxAge: 0 });
     res.status(200).json({ message: "logged out sucessfully" });
 };
+
+
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { ProfilePic } = req.body;
+
+    if (!ProfilePic) {
+      return res.status(400).json({ message: "Profile pic is required:" });
+    }
+
+    const userId = req.user._id;
+
+    const uploadResponse = await cloudinary.uploader.upload(ProfilePic);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { ProfilePic: uploadResponse.secure_url },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+
+  } catch (error) {
+    console.log("error in updating profile", error);
+    res.status(500).json({ message: "internal server error" });
+  }
+};
+
