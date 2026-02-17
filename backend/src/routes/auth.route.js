@@ -10,7 +10,8 @@ import arcjet from "@arcjet/node";
 
 router.post("/signup",signup);
 
-router.use(arcjetProtection);
+// router.use(arcjetProtection);
+
 router.post("/login",login);
 router.post("/logout",logout);
 router.put("/update-profile",protectRoute,updateProfile);

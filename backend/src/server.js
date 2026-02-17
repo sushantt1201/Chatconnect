@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/auth.route.js";
-import msgRoutes from "./routes/msg.route.js";
+import messageRoutes from "./routes/message.route.js";
 
 import cookieParser from "cookie-parser";
 import { connectDb } from "./lib/db.js";
@@ -26,7 +26,7 @@ app.use(cors({
 }));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/msg", msgRoutes);
+app.use("/api/messages", messageRoutes);
 
 app.get("/", (req, res) => {
   res.send("ChatConnect backend is live 🚀");
