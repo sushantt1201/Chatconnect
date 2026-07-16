@@ -1,133 +1,227 @@
-import React from 'react'
-import { useState } from 'react';
+import { useState } from "react";
+import { Link } from "react-router";
+import {
+  EyeIcon,
+  EyeOffIcon,
+  LoaderIcon,
+  LockIcon,
+  MailIcon,
+  MessageCircleMoreIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  UsersIcon,
+  WifiIcon,
+} from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
-import BorderAnimatedContainer from '../components/BorderAnimatedContainer';
-import { MessageCircleIcon, LockIcon, MailIcon, UserIcon, LoaderIcon } from 'lucide-react';
-import {Link} from "react-router";
 
 function LoginPage() {
-  
-    const [formData, setFormData] = useState({  Email: "", Password: "" });
-    const { login, isLoginIn } = useAuthStore();
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-  
-      login(formData);
-    };
-  
+  const [formData, setFormData] = useState({ Email: "", Password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const { login, isLoginIn } = useAuthStore();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    login(formData);
+  };
+
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-slate-900">
-      <div className="relative w-full max-w-6xl md:h-[550px] h-[750px]">
-        <BorderAnimatedContainer>
-          <div className="w-full flex flex-col md:flex-row h-full">
-            
+    <main className="auth-page">
+      <div className="auth-orb auth-orb-one" />
+      <div className="auth-orb auth-orb-two" />
+      <div className="auth-grid" />
 
-            {/* FORM COLUMN - LEFT SIDE */}
-            <div className="md:w-1/2 p-8 flex items-center justify-center md:border-r border-slate-600/30">
-              <div className="w-full max-w-md">
-
-                {/* Heading */}
-                <div className="text-center mb-8">
-                  <MessageCircleIcon className="w-12 h-12 mx-auto text-slate-400 mb-4" />
-                  <h2 className="text-2xl font-bold text-slate-200 mb-2">
-                    Welcome Back
-                  </h2>
-                  <p className="text-slate-400">
-                    Login to access to your account
-                  </p>
-                </div>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  
-                  {/*Email*/}
-                  <div>
-
-                    <label className="auth-input-label">Email</label>
-                    <div className="relative">
-                      <MailIcon className="auth-input-icon" />
-                      <input
-                        type="email"
-                        value={formData.Email}
-                        onChange={(e) =>
-                          setFormData({ ...formData, Email: e.target.value })
-                        }
-                        className="input"
-                        placeholder="abc@gmail.com"
-                      />
-                    </div>
-                  </div>
-                  {/*Password*/}
-                  <div>
-
-                    <label className="auth-input-label">Password</label>
-                    <div className="relative">
-                      <LockIcon className="auth-input-icon" />
-                      <input
-                        type="password"
-                        value={formData.Password}
-                        onChange={(e) =>
-                          setFormData({ ...formData, Password: e.target.value })
-                        }
-                        className="input"
-                        placeholder="Enter your Password"
-                      />
-                    </div>
-                  </div>
-
-                  {/*submit button */}
-
-                  <button className='auth-btn' type='submit' disabled={isLoginIn}>
-                    {isLoginIn ? (
-                      <LoaderIcon className="w-full h-5 animate-spin text-center" />
-                    ) : ("Sign In"
-
-                    )}
-
-                  </button>
-
-
-                </form>
-
-                {/*redirect to login */}
-
-                <div className='mt-6 text-center'>
-                  <Link to="/signup" className="auth-link">
-                    Don't have an account? Sign Up
-                  </Link>
-
-                </div>
-
-              </div>
-              
-
+      <section className="auth-shell">
+        <div className="auth-form-panel">
+          <div className="auth-brand">
+            <div className="auth-brand-icon">
+              <MessageCircleMoreIcon />
             </div>
-              {/*Form illustration right side */}
-              <div className='hidden md:w-1/2 md:flex items-center justify-center p-6 bg-gradient-to-bl from-slate-800/20 to-transparent'>
-                <div>
-                  <img
-                    src="/signup.jpg" alt="people chatting"
-                    className='w-full h-auto object-contain' />
-                    <div className='mt-6 text-center'>
-                     <h3 className='text-xl font-medium text-cyan-400'>Connect anytime,anywhere</h3>
-                     
-
-                       <div className='mt-6 flex justify-center gap-4'>
-                      <span className='auth-badge'> Free</span>
-                      <span className='auth-badge'> Easy access</span>
-                      <span className='auth-badge'> Secure</span>
-
-                     </div>
-                    </div>
-                </div>
-              </div>
+            <span>ChatConnect</span>
           </div>
-        </BorderAnimatedContainer>
-      </div>
-    </div>
-  );
 
+          <div className="auth-heading">
+            <span className="auth-kicker">
+              <SparklesIcon />
+              Welcome back
+            </span>
+
+            <h1>Continue your conversations.</h1>
+            <p>
+              Sign in to connect with friends, share moments, and chat in real
+              time from anywhere.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-field">
+              <label htmlFor="email">Email address</label>
+
+              <div className="auth-input-wrap">
+                <MailIcon className="auth-field-icon" />
+
+                <input
+                  id="email"
+                  type="email"
+                  value={formData.Email}
+                  onChange={(event) =>
+                    setFormData({
+                      ...formData,
+                      Email: event.target.value,
+                    })
+                  }
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="auth-field">
+              <div className="auth-label-row">
+                <label htmlFor="password">Password</label>
+                <button type="button" className="auth-text-button">
+                  Forgot password?
+                </button>
+              </div>
+
+              <div className="auth-input-wrap">
+                <LockIcon className="auth-field-icon" />
+
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.Password}
+                  onChange={(event) =>
+                    setFormData({
+                      ...formData,
+                      Password: event.target.value,
+                    })
+                  }
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  required
+                />
+
+                <button
+                  type="button"
+                  className="auth-password-toggle"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
+              </div>
+            </div>
+
+            <label className="auth-remember">
+              <input type="checkbox" />
+              <span>Keep me signed in</span>
+            </label>
+
+            <button
+              className="auth-primary-button"
+              type="submit"
+              disabled={isLoginIn}
+            >
+              {isLoginIn ? (
+                <>
+                  <LoaderIcon className="animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  Sign in
+                  <span aria-hidden="true">→</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="auth-switch-copy">
+            New to ChatConnect?
+            <Link to="/signup">Create an account</Link>
+          </p>
+
+          <div className="auth-trust-row">
+            <span>
+              <ShieldCheckIcon />
+              Secure login
+            </span>
+            <span>
+              <WifiIcon />
+              Real-time chat
+            </span>
+          </div>
+        </div>
+
+        <aside className="auth-visual-panel">
+          <div className="auth-visual-topline">
+            <span className="auth-live-dot" />
+            Live conversations
+          </div>
+
+          <div className="auth-visual-copy">
+            <h2>Closer conversations, wherever you are.</h2>
+            <p>
+              ChatConnect keeps your messages fast, focused, and available
+              across every screen.
+            </p>
+          </div>
+
+          <div className="auth-illustration-card">
+            <img src="/signup.jpg" alt="People chatting together" />
+
+            <div className="auth-message-card auth-message-card-one">
+              <div className="auth-avatar auth-avatar-purple">S</div>
+              <div>
+                <strong>Sushant</strong>
+                <span>Hey! Are you free?</span>
+              </div>
+            </div>
+
+            <div className="auth-message-card auth-message-card-two">
+              <div className="auth-avatar auth-avatar-cyan">A</div>
+              <div>
+                <strong>Ananya</strong>
+                <span className="auth-typing">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="auth-stats">
+            <div>
+              <UsersIcon />
+              <span>
+                <strong>1.2K+</strong>
+                active users
+              </span>
+            </div>
+
+            <div>
+              <MessageCircleMoreIcon />
+              <span>
+                <strong>Instant</strong>
+                messaging
+              </span>
+            </div>
+
+            <div>
+              <ShieldCheckIcon />
+              <span>
+                <strong>Protected</strong>
+                sessions
+              </span>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  );
 }
 
 export default LoginPage;

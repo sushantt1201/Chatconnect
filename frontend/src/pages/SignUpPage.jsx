@@ -1,145 +1,235 @@
-import React from 'react'
-import { useState } from 'react';
-import { useAuthStore } from '../store/useAuthStore';
-import BorderAnimatedContainer from '../components/BorderAnimatedContainer';
-import { MessageCircleIcon, LockIcon, MailIcon, UserIcon, LoaderIcon } from 'lucide-react';
-
-
+import { useState } from "react";
 import { Link } from "react-router";
-
+import {
+  EyeIcon,
+  EyeOffIcon,
+  LoaderIcon,
+  LockIcon,
+  MailIcon,
+  MessageCircleMoreIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  UserIcon,
+  UsersIcon,
+  WifiIcon,
+} from "lucide-react";
+import { useAuthStore } from "../store/useAuthStore";
 
 function SignUpPage() {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    Email: "",
+    Password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [formData, setFormData] = useState({ fullName: "", Email: "", Password: "" });
   const { signup, isSigningUp } = useAuthStore();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const handleSubmit = (event) => {
+    event.preventDefault();
     signup(formData);
   };
+
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-slate-900">
-      <div className="relative w-full max-w-6xl md:h-[600px] h-[750px]">
-        <BorderAnimatedContainer>
-          <div className="w-full flex flex-col md:flex-row h-full">
-            
+    <main className="auth-page">
+      <div className="auth-orb auth-orb-one" />
+      <div className="auth-orb auth-orb-two" />
+      <div className="auth-grid" />
 
-            {/* FORM COLUMN - LEFT SIDE */}
-            <div className="md:w-1/2 p-8 flex items-center justify-center md:border-r border-slate-600/30">
-              <div className="w-full max-w-md">
-
-                {/* Heading */}
-                <div className="text-center mb-8">
-                  <MessageCircleIcon className="w-12 h-12 mx-auto text-slate-400 mb-4" />
-                  <h2 className="text-2xl font-bold text-slate-200 mb-2">
-                    Create Account
-                  </h2>
-                  <p className="text-slate-400">
-                    Signup for a new Account
-                  </p>
-                </div>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/*full name */}
-
-                  <div>
-                    <label className="auth-input-label">Full Name</label>
-                    <div className="relative">
-                      <UserIcon className="auth-input-icon" />
-                      <input
-                        type="text"
-                        value={formData.fullName}
-                        onChange={(e) =>
-                          setFormData({ ...formData, fullName: e.target.value })
-                        }
-                        className="input"
-                        placeholder="Sushant kumar"
-                      />
-                    </div>
-                  </div>
-                  {/*Email*/}
-                  <div>
-
-                    <label className="auth-input-label">Email</label>
-                    <div className="relative">
-                      <MailIcon className="auth-input-icon" />
-                      <input
-                        type="email"
-                        value={formData.Email}
-                        onChange={(e) =>
-                          setFormData({ ...formData, Email: e.target.value })
-                        }
-                        className="input"
-                        placeholder="abc@gmail.com"
-                      />
-                    </div>
-                  </div>
-                  {/*Password*/}
-                  <div>
-
-                    <label className="auth-input-label">Password</label>
-                    <div className="relative">
-                      <LockIcon className="auth-input-icon" />
-                      <input
-                        type="password"
-                        value={formData.Password}
-                        onChange={(e) =>
-                          setFormData({ ...formData, Password: e.target.value })
-                        }
-                        className="input"
-                        placeholder="Enter your Password"
-                      />
-                    </div>
-                  </div>
-
-                  {/*submit button */}
-
-                  <button className='auth-btn' type='submit' disabled={isSigningUp}>
-                    {isSigningUp ? (
-                      <LoaderIcon className="w-full h-5 animate-spin text-center" />
-                    ) : ("Create account"
-
-                    )}
-
-                  </button>
-
-
-                </form>
-
-                {/*redirect to login */}
-
-                <div className='mt-6 text-center'>
-                  <Link to="/login" className="auth-link">
-                    Already have an account? Login
-                  </Link>
-
-                </div>
-
-              </div>
-              
-
+      <section className="auth-shell auth-shell-signup">
+        <div className="auth-form-panel">
+          <div className="auth-brand">
+            <div className="auth-brand-icon">
+              <MessageCircleMoreIcon />
             </div>
-              {/*Form illustration right side */}
-              <div className='hidden md:w-1/2 md:flex items-center justify-center p-6 bg-gradient-to-bl from-slate-800/20 to-transparent'>
-                <div>
-                  <img
-                    src="/login.png" alt="people chatting"
-                    className='w-full h-auto object-contain' />
-                    <div className='mt-6 text-center'>
-                     <h3 className='text-xl font-medium text-cyan-400'>Start Messaging Today with Us</h3>
-                  
-                    </div>
-                </div>
-              </div>
+            <span>ChatConnect</span>
           </div>
-        </BorderAnimatedContainer>
-      </div>
-    </div>
+
+          <div className="auth-heading">
+            <span className="auth-kicker">
+              <SparklesIcon />
+              Join ChatConnect
+            </span>
+
+            <h1>Create your account.</h1>
+            <p>
+              Start secure, real-time conversations and stay connected from
+              anywhere.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-field">
+              <label htmlFor="fullName">Full name</label>
+              <div className="auth-input-wrap">
+                <UserIcon className="auth-field-icon" />
+                <input
+                  id="fullName"
+                  type="text"
+                  value={formData.fullName}
+                  onChange={(event) =>
+                    setFormData({
+                      ...formData,
+                      fullName: event.target.value,
+                    })
+                  }
+                  placeholder="Sushant Kumar"
+                  autoComplete="name"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="auth-field">
+              <label htmlFor="signupEmail">Email address</label>
+              <div className="auth-input-wrap">
+                <MailIcon className="auth-field-icon" />
+                <input
+                  id="signupEmail"
+                  type="email"
+                  value={formData.Email}
+                  onChange={(event) =>
+                    setFormData({
+                      ...formData,
+                      Email: event.target.value,
+                    })
+                  }
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="auth-field">
+              <label htmlFor="signupPassword">Password</label>
+              <div className="auth-input-wrap">
+                <LockIcon className="auth-field-icon" />
+                <input
+                  id="signupPassword"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.Password}
+                  onChange={(event) =>
+                    setFormData({
+                      ...formData,
+                      Password: event.target.value,
+                    })
+                  }
+                  placeholder="Create a strong password"
+                  autoComplete="new-password"
+                  required
+                />
+
+                <button
+                  type="button"
+                  className="auth-password-toggle"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              className="auth-primary-button"
+              type="submit"
+              disabled={isSigningUp}
+            >
+              {isSigningUp ? (
+                <>
+                  <LoaderIcon className="animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                <>
+                  Create account
+                  <span aria-hidden="true">→</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="auth-switch-copy">
+            Already have an account?
+            <Link to="/login">Sign in</Link>
+          </p>
+
+          <div className="auth-trust-row">
+            <span>
+              <ShieldCheckIcon />
+              Secure account
+            </span>
+            <span>
+              <WifiIcon />
+              Real-time chat
+            </span>
+          </div>
+        </div>
+
+        <aside className="auth-visual-panel">
+          <div className="auth-visual-topline">
+            <span className="auth-live-dot" />
+            Build your circle
+          </div>
+
+          <div className="auth-visual-copy">
+            <h2>Start conversations that feel effortless.</h2>
+            <p>
+              Create your profile, find people, and enjoy fast messaging in one
+              clean space.
+            </p>
+          </div>
+
+          <div className="auth-illustration-card">
+            <img src="/login.png" alt="People connecting through chat" />
+
+            <div className="auth-message-card auth-message-card-one">
+              <div className="auth-avatar auth-avatar-purple">N</div>
+              <div>
+                <strong>New connection</strong>
+                <span>Welcome to ChatConnect!</span>
+              </div>
+            </div>
+
+            <div className="auth-message-card auth-message-card-two">
+              <div className="auth-avatar auth-avatar-cyan">3</div>
+              <div>
+                <strong>Friends online</strong>
+                <span>Ready to chat</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="auth-stats">
+            <div>
+              <UsersIcon />
+              <span>
+                <strong>Connect</strong>
+                with friends
+              </span>
+            </div>
+
+            <div>
+              <MessageCircleMoreIcon />
+              <span>
+                <strong>Instant</strong>
+                messaging
+              </span>
+            </div>
+
+            <div>
+              <ShieldCheckIcon />
+              <span>
+                <strong>Secure</strong>
+                experience
+              </span>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
   );
-
-
 }
 
 export default SignUpPage;
