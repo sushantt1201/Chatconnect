@@ -1,39 +1,88 @@
-import React from 'react'
-
-import { useChatStore } from '../store/useChatStore';
-import BorderAnimatedContainer from '../components/BorderAnimatedContainer';
-
-import ProfileHeader from '../components/ProfileHeader';
-import ActiveTabSwitch from '../components/ActiveTabSwitch';
-import ChatsList from '../components/ChatsList';
-import ContactList from '../components/ContactList';
-import ChatContainer from '../components/ChatContainer';
-import NoConversationPlaceholder from '../components/NoConversationPlaceholder';
-
+import { useEffect } from "react";
+import { SearchIcon } from "lucide-react";
+import { useAuthStore } from "../store/useAuthStore";
+import { useChatStore } from "../store/useChatStore";
+import ProfileHeader from "../components/ProfileHeader";
+import ActiveTabSwitch from "../components/ActiveTabSwitch";
+import ChatsList from "../components/ChatsList";
+import ContactList from "../components/ContactList";
+import ChatContainer from "../components/ChatContainer";
+import NoConversationPlaceholder from "../components/NoConversationPlaceholder";
 
 function ChatPage() {
-   const {activeTab,selectedUser}=useChatStore();
+  const socket = useAuthStore((state) => state.socket);
+
+  const {
+    activeTab,
+    selectedUser,
+    searchQuery,
+    setSearchQuery,
+    subscribeToRealtime,
+    unsubscribeFromRealtime,
+  } = useChatStore();
+
+  useEffect(() => {
+    if (!socket) return undefined;
+
+    const subscribe = () => subscribeToRealtime(socket);
+
+    if (socket.connected) {
+      subscribe();
+    }
+
+    socket.on("connect", subscribe);
+
+    return () => {
+      socket.off("connect", subscribe);
+      unsubscribeFromRealtime(socket);
+    };
+  }, [socket, subscribeToRealtime, unsubscribeFromRealtime]);
 
   return (
-    <div className='relative w-full max-w-6xl h-[800px]'>
-      <BorderAnimatedContainer>
-        {/*LEFT SIDE*/}
-        <div className='w-80 bg-slate-800/50 backdrop-blur-sm flex flex-col'>
-        <ProfileHeader/>
-        <ActiveTabSwitch/>
-        <div className='flex-1 overflow-y-auto p-4 space-y-2'>
+    <main className="chat-page">
+      <section className="chat-shell">
+        <aside className="chat-sidebar">
+          <ProfileHeader />
+          <ActiveTabSwitch />
 
-          {activeTab==="chats"? <ChatsList />:<ContactList/>}
-        </div>
-        </div>
+          <div className="people-list">
+            {activeTab === "chats" ? (
+              <ChatsList />
+            ) : (
+              <ContactList />
+            )}
+          </div>
 
-        {/*RIGHT SIDE*/}
-        <div className='flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm'>
-        {selectedUser?<ChatContainer/>:<NoConversationPlaceholder/>}
-        </div>
-        
-      </BorderAnimatedContainer>
-    </div>
+          <div className="sidebar-search-wrap">
+            <SearchIcon />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) =>
+                setSearchQuery(event.target.value)
+              }
+              placeholder={
+                activeTab === "chats"
+                  ? "Search conversations"
+                  : "Search contacts"
+              }
+            />
+          </div>
+        </aside>
+
+        <section
+          className={`chat-main ${
+            selectedUser ? "" : "chat-main-empty"
+          }`}
+        >
+          {selectedUser ? (
+            <ChatContainer />
+          ) : (
+            <NoConversationPlaceholder />
+          )}
+        </section>
+      </section>
+    </main>
   );
 }
 

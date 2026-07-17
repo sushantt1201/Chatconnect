@@ -1,39 +1,96 @@
 import { useEffect } from "react";
+import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
 import NoChatsFound from "./NoChatsFound";
-import { useAuthStore } from "../store/useAuthStore";
 
 function ChatsList() {
-  const { getMyChatPartners, chats, isUsersLoading, setSelectedUser } = useChatStore();
-  const { onlineUsers } = useAuthStore();
+  const {
+    getMyChatPartners,
+    chats,
+    isUsersLoading,
+    openConversation,
+    selectedUser,
+    searchQuery,
+  } = useChatStore();
+
+  const onlineUsers = useAuthStore(
+    (state) => state.onlineUsers,
+  );
 
   useEffect(() => {
     getMyChatPartners();
   }, [getMyChatPartners]);
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;
-  if (chats.length === 0) return <NoChatsFound />;
+
+  const query = searchQuery.trim().toLowerCase();
+
+  const filteredChats = chats.filter((chat) =>
+    chat.fullName.toLowerCase().includes(query),
+  );
+
+  if (filteredChats.length === 0) {
+    return <NoChatsFound />;
+  }
 
   return (
-    <>
-      {chats.map((chat) => (
-        <div
-          key={chat._id}
-          className="bg-cyan-500/10 p-4 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition-colors"
-          onClick={() => setSelectedUser(chat)}
-        >
-          <div className="flex items-center gap-3">
-            <div className={`avatar ${onlineUsers.includes(chat._id) ? "online" : "offline"}`}>
-              <div className="size-12 rounded-full">
-                <img src={chat.profilePic || "/avatar.png"} alt={chat.fullName} />
-              </div>
-            </div>
-            <h4 className="text-slate-200 font-medium truncate">{chat.fullName}</h4>
-          </div>
-        </div>
-      ))}
-    </>
+    <div className="person-list-divided">
+      {filteredChats.map((chat) => {
+        const isOnline = onlineUsers.includes(
+          String(chat._id),
+        );
+        const selected =
+          String(selectedUser?._id) === String(chat._id);
+
+        return (
+          <button
+            type="button"
+            key={chat._id}
+            className={`person-card ${
+              selected ? "person-card-selected" : ""
+            }`}
+            onClick={() => openConversation(chat)}
+          >
+            <span className="person-avatar-wrap">
+              <img
+                src={
+                  chat.ProfilePic ||
+                  chat.profilePic ||
+                  "/avatar.png"
+                }
+                alt={chat.fullName}
+                className="person-avatar"
+              />
+              <span
+                className={`person-status ${
+                  isOnline ? "person-status-online" : ""
+                }`}
+              />
+            </span>
+
+            <span className="person-copy person-copy-grow">
+              <strong>{chat.fullName}</strong>
+              <span>
+                {chat.lastMessage?.image
+                  ? "Photo"
+                  : chat.lastMessage?.text ||
+                    (isOnline ? "Online" : "Offline")}
+              </span>
+            </span>
+
+            {chat.unreadCount > 0 && (
+              <span className="unread-badge">
+                {chat.unreadCount > 99
+                  ? "99+"
+                  : chat.unreadCount}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
   );
 }
+
 export default ChatsList;

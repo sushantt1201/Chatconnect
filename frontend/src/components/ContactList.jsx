@@ -1,9 +1,21 @@
 import { useEffect } from "react";
+import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
 
 function ContactList() {
-  const { getAllContacts, allContacts, setSelectedUser, isUsersLoading } = useChatStore();
+  const {
+    getAllContacts,
+    allContacts,
+    openConversation,
+    selectedUser,
+    isUsersLoading,
+    searchQuery,
+  } = useChatStore();
+
+  const onlineUsers = useAuthStore(
+    (state) => state.onlineUsers,
+  );
 
   useEffect(() => {
     getAllContacts();
@@ -11,34 +23,69 @@ function ContactList() {
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;
 
-  // Sort contacts by fullName ascending
-  const sortedContacts = [...allContacts].sort((a, b) =>
-    a.fullName.localeCompare(b.fullName)
-  );
+  const query = searchQuery.trim().toLowerCase();
+
+  const contacts = [...allContacts]
+    .filter((contact) =>
+      contact.fullName.toLowerCase().includes(query),
+    )
+    .sort((a, b) => a.fullName.localeCompare(b.fullName));
+
+  if (contacts.length === 0) {
+    return <p className="empty-list-copy">No contacts found.</p>;
+  }
 
   return (
-    <>
-      {sortedContacts.length === 0 && (
-        <p className="text-gray-400">No contacts found</p>
-      )}
+    <div className="person-list-divided">
+      {contacts.map((contact) => {
+        const isOnline = onlineUsers.includes(
+          String(contact._id),
+        );
+        const selected =
+          String(selectedUser?._id) === String(contact._id);
 
-      {sortedContacts.map(contact => (
-        <div
-          key={contact._id}
-          className="flex items-center p-2 cursor-pointer hover:bg-slate-700 rounded"
-          onClick={() => setSelectedUser(contact)}
-        >
-          {/* Avatar */}
-          <img
-            src={contact.ProfilePic || "/avatar.png"}
-            alt={contact.fullName}
-            className="w-10 h-10 rounded-full mr-3 object-cover"
-          />
-          {/* Name */}
-          <p className="text-white font-semibold">{contact.fullName}</p>
-        </div>
-      ))}
-    </>
+        return (
+          <button
+            type="button"
+            key={contact._id}
+            className={`person-card ${
+              selected ? "person-card-selected" : ""
+            }`}
+            onClick={() => openConversation(contact)}
+          >
+            <span className="person-avatar-wrap">
+              <img
+                src={
+                  contact.ProfilePic ||
+                  contact.profilePic ||
+                  "/avatar.png"
+                }
+                alt={contact.fullName}
+                className="person-avatar"
+              />
+              <span
+                className={`person-status ${
+                  isOnline ? "person-status-online" : ""
+                }`}
+              />
+            </span>
+
+            <span className="person-copy person-copy-grow">
+              <strong>{contact.fullName}</strong>
+              <span>{isOnline ? "Online" : "Offline"}</span>
+            </span>
+
+            {contact.unreadCount > 0 && (
+              <span className="unread-badge">
+                {contact.unreadCount > 99
+                  ? "99+"
+                  : contact.unreadCount}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 

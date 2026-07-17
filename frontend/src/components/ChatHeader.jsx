@@ -1,7 +1,7 @@
-import { XIcon } from "lucide-react";
-import { useChatStore } from "../store/useChatStore";
 import { useEffect } from "react";
+import { XIcon } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
+import { useChatStore } from "../store/useChatStore";
 
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useChatStore();
@@ -14,33 +14,45 @@ function ChatHeader() {
     };
 
     window.addEventListener("keydown", handleEscKey);
-
-    // cleanup function
     return () => window.removeEventListener("keydown", handleEscKey);
   }, [setSelectedUser]);
 
   return (
-    <div
-      className="flex justify-between items-center bg-slate-800/50 border-b
-   border-slate-700/50 max-h-[84px] px-6 flex-1"
-    >
-      <div className="flex items-center space-x-3">
-        <div className={`avatar ${isOnline ? "online" : "offline"}`}>
-          <div className="w-12 rounded-full">
-            <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName} />
-          </div>
-        </div>
+    <header className="chat-header-modern">
+      <div className="chat-header-person">
+        <span className="chat-header-avatar-wrap">
+          <img
+            src={
+              selectedUser.ProfilePic ||
+              selectedUser.profilePic ||
+              "/avatar.png"
+            }
+            alt={selectedUser.fullName}
+            className="chat-header-avatar"
+          />
+          <span
+            className={`person-status ${isOnline ? "person-status-online" : ""}`}
+          />
+        </span>
 
-        <div>
-          <h3 className="text-slate-200 font-medium">{selectedUser.fullName}</h3>
-          <p className="text-slate-400 text-sm">{isOnline ? "Online" : "Offline"}</p>
+        <div className="chat-header-copy">
+          <h3>{selectedUser.fullName}</h3>
+          <p className={isOnline ? "online-copy" : ""}>
+            {isOnline ? "Online now" : "Offline"}
+          </p>
         </div>
       </div>
 
-      <button onClick={() => setSelectedUser(null)}>
-        <XIcon className="w-5 h-5 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer" />
+      <button
+        type="button"
+        className="icon-button"
+        onClick={() => setSelectedUser(null)}
+        aria-label="Close conversation"
+      >
+        <XIcon />
       </button>
-    </div>
+    </header>
   );
 }
+
 export default ChatHeader;

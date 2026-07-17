@@ -1,47 +1,50 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
-import { useAuthStore } from "./store/useAuthStore";
-import { useEffect } from "react";
 import PageLoader from "./components/PageLoader";
-
-import {Toaster} from "react-hot-toast";
+import { useAuthStore } from "./store/useAuthStore";
 
 function App() {
- 
-  const {checkAuth,isCheckingAuth,authUser}=useAuthStore()
+  const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
 
-  useEffect(()=>{
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
-    checkAuth()
-  },[checkAuth]
-)
-console.log({authUser});
-if(isCheckingAuth) return <PageLoader/>
+  if (isCheckingAuth) return <PageLoader />;
 
   return (
-    <div className="min-h-screen bg-slate-800 relative flex items-center justify-center 
-    p-4 overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-
-      gradient(to-bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"/>
-      <div className="absolute top-0 -left-4 size-96 bg-pink-400 opacity-20 blur-[100px]"/>
-      
-      
-      <div  className="absolute bottom-0 -right-4 size-96 bg-cyan-500 opacity-20 blur-[100px]"/>
-     
-      <div  className="absolute left-0  top-0 -right-0 size-96 bg-cyan-500 opacity-20 blur-[100px]"/>
+    <div className="app-page">
+      <Routes>
+        <Route
+          path="/"
+          element={authUser ? <ChatPage /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/login"
+          element={!authUser ? <LoginPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/signup"
+          element={!authUser ? <SignUpPage /> : <Navigate to="/" replace />}
+        />
+      </Routes>
 
-      
-     
-    <Routes>
-      
-      <Route path="/" element={authUser?<ChatPage />:<Navigate to={"/login"} />}/>
-      <Route path="/login" element={!authUser?<LoginPage />:<Navigate to={"/"}/>} />
-      <Route path="/signup" element={!authUser?<SignUpPage />:<Navigate to={"/"}/>} />
-    </Routes>
-
-    <Toaster/>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            border: 0,
+            borderRadius: "14px",
+            color: "#f8fafc",
+            background: "rgba(51, 65, 85, 0.96)",
+            boxShadow: "0 18px 45px rgba(15, 23, 42, 0.3)",
+          },
+        }}
+      />
     </div>
   );
 }

@@ -1,19 +1,23 @@
 import express from "express";
-
 import { protectRoute } from "../middleware/auth.middleware.js";
-import { getMessageByUserId ,sendMessage,getChatPartners,getAllContacts} from "../controllers/message.controller.js";
-import {arcjetProtection} from"../middleware/arcjet.middleware.js";
-const router=express.Router();
+import {
+  deleteMessage,
+  getAllContacts,
+  getChatPartners,
+  getMessageByUserId,
+  markConversationAsRead,
+  sendMessage,
+} from "../controllers/message.controller.js";
 
+const router = express.Router();
 
-router.use(arcjetProtection);
+router.use(protectRoute);
 
-
-router.get("/contacts",protectRoute,getAllContacts);
-
-router.get("/chats",protectRoute,getChatPartners);
-router.get("/:id",protectRoute,getMessageByUserId);
-router.post("/send/:id",protectRoute,sendMessage);
-
+router.get("/contacts", getAllContacts);
+router.get("/chats", getChatPartners);
+router.get("/:id", getMessageByUserId);
+router.post("/send/:id", sendMessage);
+router.patch("/read/:id", markConversationAsRead);
+router.delete("/:id", deleteMessage);
 
 export default router;
