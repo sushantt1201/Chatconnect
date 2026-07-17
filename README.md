@@ -379,6 +379,8 @@ Chatconnect/
 ├── .gitignore
 └── README.md
 
+
+```
 ## 🚀 Local Installation
 
 ### 1. Clone the Repository
@@ -386,6 +388,7 @@ Chatconnect/
 ```bash
 git clone https://github.com/sushantt1201/Chatconnect.git
 cd Chatconnect
+
 ```
 
 ### 2. Install Backend Dependencies
